@@ -13,9 +13,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'users': request.build_absolute_uri('users/'),
+        'teams': request.build_absolute_uri('teams/'),
+        'activities': request.build_absolute_uri('activities/'),
+        'leaderboard': request.build_absolute_uri('leaderboard/'),
+        'workouts': request.build_absolute_uri('workouts/'),
+    })
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', api_root, name='api-root'),
+    path('', include('octofit_tracker.core.urls')),
 ]
